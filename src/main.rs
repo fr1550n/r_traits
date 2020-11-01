@@ -1,5 +1,8 @@
 // https://doc.rust-lang.org/rust-by-example/trait.html
 // https://blog.thoughtram.io/iterators-in-rust/
+
+use std::fmt;
+
 struct Sheep { naked: bool, name: &'static str }
 
 trait Animal {
@@ -33,6 +36,12 @@ impl Sheep {
     }
 }
 
+impl fmt::Display for Sheep {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "(name: {}, naked: {})", self.name, self.naked)
+    }
+}
+
 // Implement the `Animal` trait for `Sheep`.
 impl Animal for Sheep {
     // `Self` is the implementor type: `Sheep`.
@@ -62,9 +71,16 @@ impl Animal for Sheep {
 fn main() {
     // Type annotation is necessary in this case.
     let mut dolly: Sheep = Animal::new("Dolly");
-    // TODO ^ Try removing the type annotations.
-
+    println!("{}", dolly);
     dolly.talk();
     dolly.shear();
+    println!("{}", dolly);
     dolly.talk();
+
+    
+    // We can use the structure as is and gain the benefits of the impl and traits defined for it:
+    let foo = Sheep { name: "foo", naked: false };
+    println!("Sheep structure: {}", foo);
+    println!("Sheep structure, call an Animal trait fn: noise(): {}", foo.noise());
+    assert_eq!(foo.noise(), "baaaaah!");
 }
